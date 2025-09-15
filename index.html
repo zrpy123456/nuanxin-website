@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自然拼读教学系统 - 背单词方法</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+        }
+        
+        header {
+            background: #4a6cf7;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .sidebar {
+            background: #f0f4ff;
+            padding: 20px;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+        
+        .search-box {
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .category-title {
+            font-weight: bold;
+            margin: 15px 0 10px;
+            color: #4a6cf7;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+        
+        .pattern-list {
+            list-style: none;
+        }
+        
+        .pattern-item {
+            padding: 8px 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .pattern-item:hover {
+            background: #d9e2ff;
+        }
+        
+        .pattern-item.active {
+            background: #4a6cf7;
+            color: white;
+        }
+        
+        .content {
+            padding: 25px;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+        
+        .pattern-header {
+            background: #5b7cfd;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .pattern {
+            font-size: 2.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        
+        .sound {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .sound-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .sound-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .rule {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+        
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .example {
+            padding: 15px;
+            background: #f9fafc;
+            border-radius: 8px;
+            transition: background 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .example:hover {
+            background: #edf2ff;
+        }
+        
+        .word {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #4a6cf7;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .play-btn {
+            background: none;
+            border: none;
+            color: #6e8efb;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .meaning {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .practice-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f0f4ff;
+            border-radius: 12px;
+        }
+        
+        .practice-title {
+            font-size: 1.5rem;
+            color: #4a6cf7;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .practice-word {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        /* 新增拼写练习样式 */
+        .spelling-input-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .spelling-input {
+            padding: 12px 15px;
+            font-size: 1.2rem;
+            border: 2px solid #4a6cf7;
+            border-radius: 8px;
+            width: 250px;
+            text-align: center;
+        }
+        
+        .spelling-submit {
+            padding: 12px 20px;
+            background: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            min-height: 30px;
+            text-align: center;
+        }
+        
+        .correct {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .incorrect {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .correct-word {
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        .practice-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #3a5cd8;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4a6cf7;
+            color: #4a6cf7;
+        }
+        
+        .btn-outline:hover {
+            background: #4a6cf7;
+            color: white;
+        }
+        
+        /* 统一使用红色高亮 */
+        .highlight {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        /* 修复字母间距问题 */
+        .word-container {
+            display: inline-flex;
+            position: relative;
+            letter-spacing: normal;
+            word-spacing: normal;
+        }
+        
+        /* 教鞭样式 */
+        #teaching-pointer {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 40"><path d="M15 0 L30 40 L15 30 L0 40 Z" fill="%23ff6b6b"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.5s;
+        }
+        
+        /* 字母样式 */
+        .letter {
+            display: inline-block;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        /* 当教鞭指向时的字母样式 */
+        .letter.pointing {
+            transform: scale(1.2);
+            color: #ff6b6b;
+            z-index: 100;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 30px;
+            grid-column: 1 / -1;
+        }
+        
+        /* 游戏按钮样式 */
+        .game-btn {
+            margin-top: 10px;
+        }
+        
+        .match-card.matched {
+            background: #28a745 !important;
+            cursor: default;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                height: auto;
+                position: static;
+            }
+            
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .practice-buttons {
+                flex-direction: column;
+            }
+            
+            .spelling-input-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .spelling-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 教鞭元素 -->
+        <div id="teaching-pointer"></div>
+        
+        <header>
+            <h1>自然拼读教学系统 - 带教鞭功能</h1>
+            <p class="subtitle">掌握字母组合发音规律，轻松记忆单词</p>
+        </header>
+        
+        <div class="sidebar">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="搜索字母组合...">
+            </div>
+            
+            <div class="category-title">元音组合</div>
+            <ul class="pattern-list" id="vowel-patterns">
+                <!-- 动态生成 -->
+            </ul>
+            
+            <div class="category-title">辅音组合</div>
+            <ul class="pattern-list" id="consonant-patterns">
+                <!-- 动态生成 -->
+            </ul>
+            
+            <div class="category-title">特殊组合</div>
+            <ul class="pattern-list" id="special-patterns">
+                <!-- 动态生成 -->
+            </ul>
+        </div>
+        
+        <div class="content">
+            <div class="pattern-header">
+                <div class="pattern" id="current-pattern">ai</div>
+                <div class="sound">
+                    发音: <span id="current-sound">/eɪ/</span>
+                    <button class="sound-btn" id="pattern-sound-btn">🔊</button>
+                </div>
+            </div>
+            
+            <p class="rule" id="current-rule">规则：通常在单词中间出现，发长音A</p>
+            
+            <div class="examples-grid" id="examples-container">
+                <!-- 动态生成 -->
+            </div>
+            
+            <div class="practice-section">
+                <h2 class="practice-title">拼读练习</h2>
+                <div class="practice-word" id="practice-word">点击"开始练习"按钮开始</div>
+                
+                <!-- 新增拼写输入区域 -->
+                <div class="spelling-input-container" id="spelling-input-container" style="display: none;">
+                    <input type="text" class="spelling-input" id="spelling-input" placeholder="请输入单词">
+                    <button class="spelling-submit" id="spelling-submit">提交</button>
+                </div>
+                
+                <div class="feedback" id="feedback"></div>
+
+                <div class="practice-buttons">
+                    <button class="btn" id="start-practice">开始练习</button>
+                    <button class="btn btn-outline" id="show-word">显示单词</button>
+                    <button class="btn btn-outline" id="next-word">下一个</button>
+                    <button class="btn" id="play-word">🔊 发音</button>
+                    <!-- 游戏按钮将在这里动态添加 -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>自然拼读教学系统 &copy; 2025 | 专为英语学习者设计</p>
+        </footer>
+    </div>
+
+    <script>
+        // 所有字母组合数据
+        const allPatterns = {
+            // 元音组合
+            "ai": {
+                sound: "/eɪ/",
+                rule: "规则：通常在单词中间出现，发长音A",
+                words: [
+                    {word: "tail", meaning: "n.尾巴; [pl.]燕尾服"},
+                    {word: "jail", meaning: "n./v.监狱; 监禁"},
+                    {word: "rail", meaning: "n.铁轨; 轨道; 铁路"},
+                    {word: "nail", meaning: "n.指甲; 钉子 vt.钉住"},
+                    {word: "rain", meaning: "n.雨，雨水 vi.下雨"},
+                    {word: "maid", meaning: "n.女仆; 少女，处女"},
+                    {word: "pain", meaning: "n.疼痛，悲痛 v.作痛"},
+                    {word: "paint", meaning: "vt.画画，(用油漆)修饰 n.涂料"}
+                ]
+            },
+            "ay": {
+                sound: "/eɪ/",
+                rule: "规则：通常在单词末尾出现，发长音A",
+                words: [
+                    {word: "bay", meaning: "n.湾,月桂树[pl.]桂冠"},
+                    {word: "lay", meaning: "vt.放;安排;铺设;覆盖"},
+                    {word: "say", meaning: "vt.说;说明;比如说"},
+                    {word: "way", meaning: "n.道路;方式;方法"},
+                    {word: "hay", meaning: "n.干草; 饲料"},
+                    {word: "pay", meaning: "vt.vi.付款;给…报酬"},
+                    {word: "may", meaning: "v.aux.可能;可以，祝"},
+                    {word: "ray", meaning: "n.光线，射线，辐射线"}
+                ]
+            },
+            "ee": {
+                sound: "/iː/",
+                rule: "规则：通常在单词中间出现，发长音E",
+                words: [
+                    {word: "feet", meaning: "n.foot 脚的复数"},
+                    {word: "jeep", meaning: "n.吉普车; 小型越野车"},
+                    {word: "bee", meaning: "n.蜂，密蜂;忙碌的人"},
+                    {word: "eel", meaning: "n.鳝鱼"},
+                    {word: "peel", meaning: "vt.剥(皮)，削(皮)"},
+                    {word: "reed", meaning: "n.芦苇，芦杆，芦丛"},
+                    {word: "see", meaning: "vt.看见;遇见;看出"},
+                    {word: "teeth", meaning: "tooth 牙(复数)"}
+                ]
+            },
+            "ea": {
+                sound: "/iː/",
+                rule: "规则：通常在单词中间出现，发长音E",
+                words: [
+                    {word: "sea", meaning: "n.海，海洋，海面"},
+                    {word: "pea", meaning: "n.豌豆;豌豆属植物"},
+                    {word: "tea", meaning: "n.茶树; 茶叶; 茶点"},
+                    {word: "peach", meaning: "n.桃子，桃树"},
+                    {word: "leaf", meaning: "n.树叶，(书刊的)一张(两面)"},
+                    {word: "read", meaning: "vt.读，看懂，辩认;觉察"},
+                    {word: "meat", meaning: "n.(猪、牛、羊等的)肉"},
+                    {word: "eat", meaning: "v. 吃(饭); 用餐;"}
+                ]
+            },
+                        "ey": {
+                sound: "/eɪ/ 或 /iː/",
+                rule: "规则：通常在单词末尾出现，可发/eɪ/或/iː/音",
+                words: [
+                    {word: "key", meaning: "n.钥匙;关键 a.基本的"},
+                    {word: "honey", meaning: "n.蜂蜜"},
+                    {word: "money", meaning: "n.货币；金钱，财富"},
+                    {word: "monkey", meaning: "n.猴子 v.乱弄; 胡闹"},
+                    {word: "donkey", meaning: "n.驴子;蠢人;顽固的人"},
+                    {word: "turkey", meaning: "n.火鸡；火鸡肉"},
+                    {word: "jockey", meaning: "n 骑手"},
+                    {word: "hockey", meaning: "n.曲棍球"}
+                ]
+            },
+            "ie": {
+                sound: "/aɪ/",
+                rule: "规则：通常在单词中间或末尾出现，发长音I",
+                words: [
+                    {word: "tie", meaning: "n.系带；(引抻为)联系"},
+                    {word: "pie", meaning: "n.派，有果子馅的蛋糕"},
+                    {word: "lie", meaning: "vi.说谎，欺骗 n.谎话"},
+                    {word: "die", meaning: "vi.死亡; 枯死; 熄灭"},
+                    {word: "pied", meaning: "adj.杂色的；斑驳的"},
+                    {word: "hie", meaning: "vi&vi 快走"},
+                    {word: "vie", meaning: "vi.竞争 vt. 使竞争、做较量"},
+                    {word: "fried", meaning: "a.油煎的, 油炸的"}
+                ]
+            },
+            "igh": {
+                sound: "/aɪ/",
+                rule: "规则：通常在单词中间出现，发长音I",
+                words: [
+                    {word: "light", meaning: "n,灯 vt.点燃；照亮vi.点着"},
+                    {word: "fight", meaning: "v.打仗，战斗，作斗争"},
+                    {word: "sight", meaning: "n.情景，名胜，风景"},
+                    {word: "right", meaning: "n.右;右边 adj.右边的"},
+                    {word: "night", meaning: "n.夜晚，夜间，黑夜"},
+                    {word: "might", meaning: "v.aux.可能，会，也许"},
+                    {word: "sigh", meaning: "n.&vi.叹气，叹息"},
+                    {word: "high", meaning: "a.高的；高级的 ad.高"}
+                ]
+            },
+            "oa": {
+                sound: "/oʊ/",
+                rule: "规则：通常在单词中间出现，发长音O",
+                words: [
+                    {word: "boat", meaning: "n.小船；艇；小轮船"},
+                    {word: "toad", meaning: "n.蟾蜍，癞蛤蟆"},
+                    {word: "toast", meaning: "vt./n.祝酒n.吐丝v.烘"},
+                    {word: "road", meaning: "n.道路，公路；途径"},
+                    {word: "goat", meaning: "n.山羊"},
+                    {word: "soap", meaning: "n.肥皂(不可数名词)"},
+                    {word: "coal", meaning: "n.煤，煤块"},
+                    {word: "coat", meaning: "n.外衣，一层，一道(油漆等)"}
+                ]
+            },
+            "ow1": {
+                sound: "/oʊ/",
+                rule: "规则：ow的第一种发音，发长音O",
+                words: [
+                    {word: "row", meaning: "vt.划(船等) vi.划船"},
+                    {word: "low", meaning: "adj.低的；浅的；矮的"},
+                    {word: "bowl", meaning: "n.碗，钵;碗状物"},
+                    {word: "yellow", meaning: "a.黄(色)的 n.黄(色)"},
+                    {word: "pillow", meaning: "n.枕头 v.枕, 搁, 垫"},
+                    {word: "hollow", meaning: "adj.空旷，空虚的；无意义的"},
+                    {word: "window", meaning: "n.窗子，窗户，窗口"},
+                    {word: "rainbow", meaning: "n.虹；彩虹"}
+                ]
+            },
+            "ui-ue": {
+                sound: "/uː/ 或 /juː/",
+                rule: "规则：ui和ue组合，发长音U或JU",
+                words: [
+                    {word: "suit", meaning: "n.套装，起拆，诉讼 vt.适合"},
+                    {word: "juice", meaning: "n.果汁; 精髓; 精力"},
+                    {word: "juicy", meaning: "adj. 多汁的; 有趣的"},
+                    {word: "fruit", meaning: "n.水果;果实 v.结果实"},
+                    {word: "sue", meaning: "vt.& vi.控告，控诉"},
+                    {word: "blue", meaning: "a.蓝的;阴郁的 n.蓝色"},
+                    {word: "clue", meaning: "n.线索，暗示，提示"},
+                    {word: "glue", meaning: "n.胶水，胶 v.用胶粘"}
+                ]
+            },
+            "y1": {
+                sound: "/aɪ/",
+                rule: "规则：通常在单词末尾出现，发长音I",
+                words: [
+                    {word: "sky", meaning: "n.天空;[pl]天色;气候"},
+                    {word: "fly", meaning: "vt.放(风筝,飞机模型)"},
+                    {word: "cry", meaning: "v./n.叫(卖); 哭; 喊"},
+                    {word: "shy", meaning: "a.易受惊的；害羞的"},
+                    {word: "my", meaning: "pron.我的"},
+                    {word: "spy", meaning: "n.间谍，特务 vt.侦察"},
+                    {word: "dry", meaning: "a.干的;枯燥的 v.使干"},
+                    {word: "type", meaning: "n.类型，典型 v.打字"}
+                ]
+            },
+            "y2": {
+                sound: "/i/",
+                rule: "规则：通常在单词中间或末尾出现，发短音I",
+                words: [
+                    {word: "rainy", meaning: "adj.下雨的；多雨的"},
+                    {word: "sunny", meaning: "a.阳光充足的；快活的"},
+                    {word: "puppy", meaning: "n.小狗；幼小的动物"},
+                    {word: "dizzy", meaning: "a.头晕眼花的，眩晕的"},
+                    {word: "dirty", meaning: "a.不干净的 vt.弄脏"},
+                    {word: "happy", meaning: "adj.幸福的；快乐的"},
+                    {word: "baby", meaning: "n小宝宝，.一家中年龄最小的人"},
+                    {word: "pony", meaning: "n.矮种马 a.小型的"}
+                ]
+            },
+            "or": {
+                sound: "/ɔːr/",
+                rule: "规则：or组合，发/ɔːr/音",
+                words: [
+                    {word: "porch", meaning: "n.(上有顶棚的)门廊"},
+                    {word: "horse", meaning: "n.马; [体育]木马"},
+                    {word: "fort", meaning: "n.要塞; 堡垒; 碉堡"},
+                    {word: "fork", meaning: "n.餐叉 v.叉; 分岔"},
+                    {word: "pork", meaning: "n.猪肉"},
+                    {word: "horn", meaning: "n.号角；警报器；角"},
+                    {word: "corn", meaning: "n.玉米，谷物；(英)小麦"},
+                    {word: "morning", meaning: "n.早晨；上午"}
+                ]
+            },
+            "ar": {
+                sound: "/ɑːr/",
+                rule: "规则：ar组合，发/ɑːr/音",
+                words: [
+                    {word: "car", meaning: "n.汽车，小汽车，轿车"},
+                    {word: "cart", meaning: "n.手推车 v.用车运送"},
+                    {word: "card", meaning: "n.卡片; 请帖; 入场券"},
+                    {word: "park", meaning: "n.公园 v.停放(车辆)"},
+                    {word: "farm", meaning: "n.农场，农庄；饲养场"},
+                    {word: "arm", meaning: "n.手臂，扶手 v.武装"},
+                    {word: "farmer", meaning: "n.农民；农场主"},
+                    {word: "garden", meaning: "n.花园, 果园 vt.种花"}
+                ]
+            },
+            "ur": {
+                sound: "/ɜːr/",
+                rule: "规则：ur组合，发/ɜːr/音",
+                words: [
+                    {word: "fur", meaning: "n.(兽类的)软毛；皮毛"},
+                    {word: "hurt", meaning: "v.使受伤，使痛，伤害"},
+                    {word: "purse", meaning: "n.钱包，小钱袋，手袋"},
+                    {word: "nurse", meaning: "n.保姆；护士 vt.看护"},
+                    {word: "burn", meaning: "v.燃烧; 烧毁;n. 烧伤，烫伤"},
+                    {word: "burst", meaning: "v 爆炸 n 爆裂"},
+                    {word: "curb", meaning: "v.控制，抑制; 约束，限定n.起控制（或限制）作用的事情"},
+                    {word: "lurk", meaning: "vi.潜伏，埋伏; 潜藏， n.潜在，潜伏; 欺诈"}
+                ]
+            },
+           "er": {
+                sound: "/ər/",
+                rule: "规则：er组合，发/ər/音",
+                words: [
+                    {word: "sister", meaning: "n.姐; 妹; [英]护士"},
+                    {word: "brother", meaning: "n.兄弟；同事，同胞"},
+                    {word: "father", meaning: "n.父亲；神父；创始人"},
+                    {word: "mother", meaning: "n.母亲; 根源 vt.产生"},
+                    {word: "winter", meaning: "n.冬天；冬季"},
+                    {word: "rooster", meaning: "n.公鸡；狂妄自负的人"},
+                    {word: "mermaid", meaning: " n.美人鱼"},
+                    {word: "marker", meaning: "n.记号，标记，标志"}
+                ]
+            },           
+           "ir": {
+                sound: "/ər/",
+                rule: "规则：ir组合，发/ər/音",
+                words: [
+                    {word: "bird", meaning: "n.鸟，禽类"},
+                    {word: "dirt", meaning: "n.尘，土；污物，污垢"},
+                    {word: "dirty", meaning: "a.不干净的 vt.弄脏"},
+                    {word: "first", meaning: "adj.第一的 adv.首先"},
+                    {word: "girl", meaning: "n.女孩子，姑娘；女儿"},
+                    {word: "birthday", meaning: "n.生日，诞生的日期"},
+                    {word: "circus", meaning: "n.马戏(团); 圆形广场"},
+                    {word: "circle", meaning: "n.圆，圈，循环，周期"}
+                ]
+            }  
+        };
+
+        // 为练习功能准备的单词列表
+        const allWords = {};
+        Object.keys(allPatterns).forEach(pattern => {
+            allWords[pattern] = allPatterns[pattern].words.map(item => item.word);
+        });
+
+       // 组合分类
+      const patternCategories = {
+           "vowel": ["ai", "ay", "ee", "ea", "ey", "ie", "igh", "oa", "ow1", "ui-ue", "y1", "y2","or", "ar", "ur","er","ir", "ou","ow2", "oi", "oy", "au", "aw", "oo1", "oo2","ea2"],
+           "consonant": ["ch1", "ch2", "sh", "ph", "wh1", "wh2", "ther", "th", "all", "kn", "wr", "mb", "ew", "ge", "bl", "fl", "pl", "cl", "gl", "cr", "gr", "pr", "br", "fr", "tr", "dr", "sm", "sn", "sl", "sp", "st", "sc", "sk", "str"],
+           "special": ["a", "e", "i", "o", "u","a-e", "e-e", "i-e", "o-e", "u-e"]
+      };
+
+        // === 练习功能全局变量 ===
+        let currentPattern;
+        let practiceWords;
+        let originalOrderWords; // 保存原始顺序的单词
+        let currentPracticeIndex;
+        let isSpellingMode;
+        let isSecondRound = false; // 标记是否是第二轮（乱序）练习
+
+        // 辅助函数：打乱数组
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // 小猪吃苹果游戏
+        function startPigEatAppleGame() {
+            const words = [...allWords[currentPattern]];
+            if (words.length === 0) {
+                alert("此组合暂无单词可游戏");
+                return;
+            }
+            
+            // 创建游戏界面
+            const gameHTML = `
+                <div id="pig-game-container" style="text-align: center; padding: 20px;">
+                    <h2>小猪吃苹果游戏 🐷🍎</h2>
+                    <p>规则: 每个单词会缺少一个字母，填对字母就下一个单词，如果填错小猪就掉进悬崖，游戏重新开始!</p>
+                    <div id="game-word" style="font-size: 2.5rem; font-weight: bold; margin: 20px 0; letter-spacing: 3px;"></div>
+                    <div id="game-input-container" style="margin: 20px 0;">
+                        <input type="text" id="game-letter-input" maxlength="1" style="font-size: 1.5rem; width: 50px; text-align: center; padding: 10px;">
+                        <button id="game-submit" style="padding: 10px 20px; margin-left: 10px;">提交</button>
+                    </div>
+                    <div id="game-feedback" style="min-height: 40px; font-size: 1.2rem;"></div>
+                    <div id="game-progress" style="margin-top: 20px;"></div>
+                    <button id="close-game" style="margin-top: 20px; padding: 10px 20px;">返回</button>
+                </div>
+            `;
+            
+            // 隐藏练习区域，显示游戏区域
+            document.querySelector('.practice-section').style.display = 'none';
+            document.getElementById('examples-container').insertAdjacentHTML('afterend', gameHTML);
+            
+            // 游戏变量
+            let gameWords = [...words];
+            let currentGameIndex = 0;
+            let hiddenPosition = 0;
+            
+            // 打乱单词顺序
+            shuffleArray(gameWords);
+            
+            // 初始化游戏
+            setupGameWord();
+            
+            // 提交答案事件
+            document.getElementById('game-submit').addEventListener('click', checkGameAnswer);
+            document.getElementById('game-letter-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkGameAnswer();
+                }
+            });
+            
+            // 关闭游戏事件
+            document.getElementById('close-game').addEventListener('click', function() {
+                document.getElementById('pig-game-container').remove();
+                document.querySelector('.practice-section').style.display = 'block';
+            });
+            
+            // 设置游戏单词
+            function setupGameWord() {
+                const word = gameWords[currentGameIndex];
+                hiddenPosition = Math.floor(Math.random() * word.length);
+                const hiddenLetter = word[hiddenPosition];
+                
+                let displayWord = '';
+                for (let i = 0; i < word.length; i++) {
+                    if (i === hiddenPosition) {
+                        displayWord += '_';
+                    } else {
+                        displayWord += word[i];
+                    }
+                }
+                
+                document.getElementById('game-word').textContent = displayWord;
+                document.getElementById('game-word').dataset.fullWord = word;
+                document.getElementById('game-word').dataset.hiddenLetter = hiddenLetter;
+                document.getElementById('game-letter-input').value = '';
+                document.getElementById('game-feedback').innerHTML = '';
+                document.getElementById('game-progress').innerHTML = `进度: ${currentGameIndex + 1}/${gameWords.length}`;
+                
+                // 自动聚焦输入框
+                document.getElementById('game-letter-input').focus();
+            }
+            
+            // 检查游戏答案
+            function checkGameAnswer() {
+                const userInput = document.getElementById('game-letter-input').value.toLowerCase();
+                const correctLetter = document.getElementById('game-word').dataset.hiddenLetter.toLowerCase();
+                const fullWord = document.getElementById('game-word').dataset.fullWord;
+                
+                if (userInput === correctLetter) {
+                    // 答对了
+                    document.getElementById('game-feedback').innerHTML = `<span style="color: green;">正确! "${fullWord}" 小猪吃到了苹果! 🍎</span>`;
+                    
+                    // 移动到下一个单词
+                    currentGameIndex++;
+                    
+                    if (currentGameIndex >= gameWords.length) {
+                        // 游戏通关
+                        setTimeout(() => {
+                            document.getElementById('game-feedback').innerHTML = `<span style="color: green; font-weight: bold;">恭喜! 你帮助小猪吃完了所有苹果! 🎉</span>`;
+                            document.getElementById('game-word').textContent = "游戏完成!";
+                            document.getElementById('game-input-container').style.display = 'none';
+                        }, 1000);
+                    } else {
+                        // 准备下一个单词
+                        setTimeout(setupGameWord, 1000);
+                    }
+                } else {
+                    // 答错了
+                    document.getElementById('game-feedback').innerHTML = `<span style="color: red;">错误! 正确答案是 "${correctLetter}"</span>`;
+                    document.getElementById('game-feedback').innerHTML += `<div>小猪掉下悬崖了! 😱 游戏重新开始!</div>`;
+                    
+                    // 游戏重新开始
+                    setTimeout(() => {
+                        shuffleArray(gameWords);
+                        currentGameIndex = 0;
+                        setupGameWord();
+                    }, 2000);
+                }
+            }
+        }
+
+        // 单词拼图游戏
+        function startWordPuzzleGame() {
+            const words = [...allWords[currentPattern]];
+            if (words.length === 0) {
+                alert("此组合暂无单词可游戏");
+                return;
+            }
+            
+            // 创建游戏界面
+            const gameHTML = `
+                <div id="puzzle-game-container" style="text-align: center; padding: 20px;">
+                    <h2>单词拼图游戏 🧩</h2>
+                    <p>规则: 将打乱的字母重新排列成正确的单词</p>
+                    <div id="puzzle-scrambled" style="font-size: 2rem; font-weight: bold; margin: 20px 0; letter-spacing: 5px;"></div>
+                    <div id="puzzle-input-container" style="margin: 20px 0;">
+                        <input type="text" id="puzzle-input" style="font-size: 1.2rem; padding: 10px; width: 200px;">
+                        <button id="puzzle-submit" style="padding: 10px 20px; margin-left: 10px;">提交</button>
+                    </div>
+                    <div id="puzzle-feedback" style="min-height: 40px; font-size: 1.2rem;"></div>
+                    <div id="puzzle-progress" style="margin-top: 20px;"></div>
+                    <button id="close-puzzle" style="margin-top: 20px; padding: 10px 20px;">返回</button>
+                </div>
+            `;
+            
+            // 隐藏练习区域，显示游戏区域
+            document.querySelector('.practice-section').style.display = 'none';
+            document.getElementById('examples-container').insertAdjacentHTML('afterend', gameHTML);
+            
+            // 游戏变量
+            let puzzleWords = [...words];
+            let currentPuzzleIndex = 0;
+            
+            // 打乱单词顺序
+            shuffleArray(puzzleWords);
+            
+            // 初始化游戏
+            setupPuzzleWord();
+            
+            // 提交答案事件
+            document.getElementById('puzzle-submit').addEventListener('click', checkPuzzleAnswer);
+            document.getElementById('puzzle-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPuzzleAnswer();
+                }
+            });
+            
+            // 关闭游戏事件
+            document.getElementById('close-puzzle').addEventListener('click', function() {
+                document.getElementById('puzzle-game-container').remove();
+                document.querySelector('.practice-section').style.display = 'block';
+            });
+            
+            // 设置拼图单词
+            function setupPuzzleWord() {
+                const word = puzzleWords[currentPuzzleIndex];
+                const scrambled = scrambleWord(word);
+                
+                document.getElementById('puzzle-scrambled').textContent = scrambled;
+                document.getElementById('puzzle-scrambled').dataset.answer = word;
+                document.getElementById('puzzle-input').value = '';
+                document.getElementById('puzzle-feedback').innerHTML = '';
+                document.getElementById('puzzle-progress').innerHTML = `进度: ${currentPuzzleIndex + 1}/${puzzleWords.length}`;
+                
+                // 自动聚焦输入框
+                document.getElementById('puzzle-input').focus();
+            }
+            
+            // 打乱单词字母
+            function scrambleWord(word) {
+                const letters = word.split('');
+                for (let i = letters.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [letters[i], letters[j]] = [letters[j], letters[i]];
+                }
+                return letters.join('');
+            }
+            
+            // 检查拼图答案
+            function checkPuzzleAnswer() {
+                const userInput = document.getElementById('puzzle-input').value.toLowerCase();
+                const correctWord = document.getElementById('puzzle-scrambled').dataset.answer.toLowerCase();
+                
+                if (userInput === correctWord) {
+                    // 答对了
+                    document.getElementById('puzzle-feedback').innerHTML = `<span style="color: green;">正确! "${correctWord}"</span>`;
+                    
+                    // 移动到下一个单词
+                    currentPuzzleIndex++;
+                    
+                    if (currentPuzzleIndex >= puzzleWords.length) {
+                        // 游戏通关
+                        setTimeout(() => {
+                            document.getElementById('puzzle-feedback').innerHTML = `<span style="color: green; font-weight: bold;">恭喜! 你完成了所有单词拼图! 🎉</span>`;
+                            document.getElementById('puzzle-scrambled').textContent = "游戏完成!";
+                            document.getElementById('puzzle-input-container').style.display = 'none';
+                        }, 1000);
+                    } else {
+                        // 准备下一个单词
+                        setTimeout(setupPuzzleWord, 1000);
+                    }
+                } else {
+                    // 答错了
+                    document.getElementById('puzzle-feedback').innerHTML = `<span style="color: red;">错误! 再试一次</span>`;
+                    document.getElementById('puzzle-input').value = '';
+                    document.getElementById('puzzle-input').focus();
+                }
+            }
+        }
+
+        // Hangman游戏
+        function startHangmanGame() {
+            const words = [...allWords[currentPattern]];
+            if (words.length === 0) {
+                alert("此组合暂无单词可游戏");
+                return;
+            }
+            
+            // 创建游戏界面
+            const gameHTML = `
+                <div id="hangman-game-container" style="text-align: center; padding: 20px;">
+                    <h2>Hangman游戏 🎯</h2>
+                    <p>规则: 猜出隐藏的单词，每次猜一个字母</p>
+                    <div id="hangman-drawing" style="font-size: 2rem; margin: 20px 0; min-height: 80px;">
+                        <pre id="hangman-art"></pre>
+                    </div>
+                    <div id="hangman-word" style="font-size: 2rem; font-weight: bold; margin: 20px 0; letter-spacing: 10px;"></div>
+                    <div id="hangman-letters" style="margin: 20px 0;">
+                        ${'abcdefghijklmnopqrstuvwxyz'.split('').map(letter => 
+                            `<button class="letter-btn" data-letter="${letter}" style="margin: 5px; padding: 8px 12px; font-size: 1.2rem;">${letter}</button>`
+                        ).join('')}
+                    </div>
+                    <div id="hangman-feedback" style="min-height: 40px; font-size: 1.2rem;"></div>
+                    <div id="hangman-progress" style="margin-top: 20px;"></div>
+                    <button id="close-hangman" style="margin-top: 20px; padding: 10px 20px;">返回</button>
+                </div>
+            `;
+            
+            // 隐藏练习区域，显示游戏区域
+            document.querySelector('.practice-section').style.display = 'none';
+            document.getElementById('examples-container').insertAdjacentHTML('afterend', gameHTML);
+            
+            // 游戏变量
+            let hangmanWords = [...words];
+            let currentHangmanIndex = 0;
+            let currentWord = '';
+            let guessedLetters = [];
+            let wrongGuesses = 0;
+            const maxWrongGuesses = 6;
+            
+            // 打乱单词顺序
+            shuffleArray(hangmanWords);
+            
+            // 初始化游戏
+            setupHangmanWord();
+            
+            // 字母按钮事件
+            document.querySelectorAll('.letter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const letter = this.getAttribute('data-letter');
+                    guessLetter(letter);
+                    this.disabled = true;
+                });
+            });
+            
+            // 关闭游戏事件
+            document.getElementById('close-hangman').addEventListener('click', function() {
+                document.getElementById('hangman-game-container').remove();
+                document.querySelector('.practice-section').style.display = 'block';
+            });
+            
+            // 设置Hangman单词
+            function setupHangmanWord() {
+                currentWord = hangmanWords[currentHangmanIndex];
+                guessedLetters = [];
+                wrongGuesses = 0;
+                
+                updateHangmanDisplay();
+                updateHangmanArt();
+                
+                document.getElementById('hangman-feedback').innerHTML = '';
+                document.getElementById('hangman-progress').innerHTML = `进度: ${currentHangmanIndex + 1}/${hangmanWords.length}`;
+                
+                // 启用所有字母按钮
+                document.querySelectorAll('.letter-btn').forEach(btn => {
+                    btn.disabled = false;
+                });
+            }
+            
+            // 更新Hangman显示
+            function updateHangmanDisplay() {
+                let display = '';
+                for (const letter of currentWord) {
+                    if (guessedLetters.includes(letter)) {
+                        display += letter + ' ';
+                    } else {
+                        display += '_ ';
+                    }
+                }
+                document.getElementById('hangman-word').textContent = display;
+            }
+            
+            // 更新Hangman图画
+            function updateHangmanArt() {
+                const hangmanStages = [
+                    `
+                     +---+
+                     |   |
+                         |
+                         |
+                         |
+                         |
+                    =========
+                    `,
+                    `
+                     +---+
+                     |   |
+                     O   |
+                         |
+                         |
+                         |
+                    =========
+                    `,
+                    `
+                     +---+
+                     |   |
+                     O   |
+                     |   |
+                         |
+                         |
+                    =========
+                    `,
+                    `
+                     +---+
+                     |   |
+                     O   |
+                    /|   |
+                         |
+                         |
+                    =========
+                    `,
+                    `
+                     +---+
+                     |   |
+                     O   |
+                    /|\\  |
+                         |
+                         |
+                    =========
+                    `,
+                    `
+                     +---+
+                     |   |
+                     O   |
+                    /|\\  |
+                    /    |
+                         |
+                    =========
+                    `,
+                    `
+                     +---+
+                     |   |
+                     O   |
+                    /|\\  |
+                    / \\  |
+                         |
+                    =========
+                    `
+                ];
+                
+                document.getElementById('hangman-art').textContent = hangmanStages[wrongGuesses];
+            }
+            
+            // 猜字母
+            function guessLetter(letter) {
+                if (guessedLetters.includes(letter)) return;
+                
+                guessedLetters.push(letter);
+                
+                if (currentWord.includes(letter)) {
+                    // 猜对了
+                    updateHangmanDisplay();
+                    
+                    // 检查是否猜出了整个单词
+                    if (isWordGuessed()) {
+                        document.getElementById('hangman-feedback').innerHTML = `<span style="color: green;">正确! "${currentWord}"</span>`;
+                        
+                        // 移动到下一个单词
+                        setTimeout(() => {
+                            currentHangmanIndex++;
+                            if (currentHangmanIndex >= hangmanWords.length) {
+                                // 游戏通关
+                                document.getElementById('hangman-feedback').innerHTML = `<span style="color: green; font-weight: bold;">恭喜! 你完成了所有Hangman挑战! 🎉</span>`;
+                                document.getElementById('hangman-word').textContent = "游戏完成!";
+                                document.getElementById('hangman-letters').style.display = 'none';
+                            } else {
+                                setupHangmanWord();
+                            }
+                        }, 1500);
+                    }
+                } else {
+                    // 猜错了
+                    wrongGuesses++;
+                    updateHangmanArt();
+                    
+                    if (wrongGuesses >= maxWrongGuesses) {
+                        // 游戏失败
+                        document.getElementById('hangman-feedback').innerHTML = `<span style="color: red;">游戏结束! 单词是 "${currentWord}"</span>`;
+                        
+                        // 显示正确答案
+                        document.getElementById('hangman-word').textContent = currentWord;
+                        
+                        // 禁用所有字母按钮
+                        document.querySelectorAll('.letter-btn').forEach(btn => {
+                            btn.disabled = true;
+                        });
+                        
+                        // 重新开始当前单词
+                        setTimeout(() => {
+                            setupHangmanWord();
+                        }, 2000);
+                    }
+                }
+            }
+            
+            // 检查是否猜出了整个单词
+            function isWordGuessed() {
+                for (const letter of currentWord) {
+                    if (!guessedLetters.includes(letter)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
+        // 单词匹配游戏
+        function startWordMatchGame() {
+            const words = [...allWords[currentPattern]];
+            if (words.length === 0) {
+                alert("此组合暂无单词可游戏");
+                return;
+            }
+            
+            // 创建游戏界面
+            const gameHTML = `
+                <div id="match-game-container" style="text-align: center; padding: 20px;">
+                    <h2>单词匹配游戏 🧠</h2>
+                    <p>规则: 匹配单词和它们的含义</p>
+                    <div id="match-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 20px 0;"></div>
+                    <div id="match-feedback" style="min-height: 40px; font-size: 1.2rem;"></div>
+                    <div id="match-progress" style="margin-top: 20px;"></div>
+                    <button id="close-match" style="margin-top: 20px; padding: 10px 20px;">返回</button>
+                </div>
+            `;
+            
+            // 隐藏练习区域，显示游戏区域
+            document.querySelector('.practice-section').style.display = 'none';
+            document.getElementById('examples-container').insertAdjacentHTML('afterend', gameHTML);
+            
+            // 游戏变量
+            let matchWords = [...allPatterns[currentPattern].words];
+            let selectedCard = null;
+            let matchedPairs = 0;
+            
+            // 打乱单词顺序
+            shuffleArray(matchWords);
+            
+            // 初始化游戏
+            setupMatchGame();
+            
+            // 关闭游戏事件
+            document.getElementById('close-match').addEventListener('click', function() {
+                document.getElementById('match-game-container').remove();
+                document.querySelector('.practice-section').style.display = 'block';
+            });
+            
+            // 设置匹配游戏
+            function setupMatchGame() {
+                const matchGrid = document.getElementById('match-grid');
+                matchGrid.innerHTML = '';
+                
+                // 创建单词卡片和含义卡片
+                const allCards = [];
+                
+                matchWords.forEach((item, index) => {
+                    // 单词卡片
+                    allCards.push({
+                        type: 'word',
+                        content: item.word,
+                        pairId: index
+                    });
+                    
+                    // 含义卡片
+                    allCards.push({
+                        type: 'meaning',
+                        content: item.meaning,
+                        pairId: index
+                    });
+                });
+                
+                // 打乱卡片顺序
+                shuffleArray(allCards);
+                
+                // 创建卡片元素
+                allCards.forEach(card => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'match-card';
+                    cardElement.dataset.type = card.type;
+                    cardElement.dataset.pairId = card.pairId;
+                    cardElement.textContent = '?';
+                    cardElement.style.cssText = `
+                        padding: 15px;
+                        background: #4a6cf7;
+                        color: white;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        min-height: 60px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.1rem;
+                    `;
+                    
+                    cardElement.addEventListener('click', () => flipCard(cardElement, card));
+                    matchGrid.appendChild(cardElement);
+                });
+                
+                document.getElementById('match-feedback').innerHTML = '';
+                document.getElementById('match-progress').innerHTML = `找到: ${matchedPairs}/${matchWords.length} 对`;
+            }
+            
+            // 翻转卡片
+            function flipCard(cardElement, card) {
+                // 如果卡片已经匹配或已经翻开，则忽略点击
+                if (cardElement.classList.contains('matched') || cardElement.textContent !== '?') {
+                    return;
+                }
+                
+                // 显示卡片内容
+                cardElement.textContent = card.content;
+                cardElement.style.background = '#f0f4ff';
+                cardElement.style.color = '#333';
+                
+                if (!selectedCard) {
+                    // 第一次选择
+                    selectedCard = {element: cardElement, ...card};
+                } else {
+                    // 第二次选择，检查是否匹配
+                    if (selectedCard.type !== card.type && selectedCard.pairId === card.pairId) {
+                        // 匹配成功
+                        cardElement.classList.add('matched');
+                        selectedCard.element.classList.add('matched');
+                        selectedCard = null;
+                        matchedPairs++;
+                        
+                        document.getElementById('match-progress').innerHTML = `找到: ${matchedPairs}/${matchWords.length} 对`;
+                        
+                        // 检查游戏是否完成
+                        if (matchedPairs >= matchWords.length) {
+                            document.getElementById('match-feedback').innerHTML = `<span style="color: green; font-weight: bold;">恭喜! 你完成了所有匹配! 🎉</span>`;
+                        }
+                    } else {
+                        // 不匹配，翻回
+                        setTimeout(() => {
+                            cardElement.textContent = '?';
+                            cardElement.style.background = '#4a6cf7';
+                            cardElement.style.color = 'white';
+                            
+                            selectedCard.element.textContent = '?';
+                            selectedCard.element.style.background = '#4a6cf7';
+                            selectedCard.element.style.color = 'white';
+                            
+                            selectedCard = null;
+                        }, 1000);
+                    }
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化教鞭功能
+            const pointer = document.getElementById('teaching-pointer');
+            
+            // 移动教鞭到指定元素
+            function movePointerToElement(element, callback) {
+                if (!element) return;
+                
+                // 获取元素位置
+                const rect = element.getBoundingClientRect();
+                const containerRect = document.querySelector('.container').getBoundingClientRect();
+                
+                // 计算教鞭位置
+                const x = rect.left + rect.width / 2 - 15; // 教鞭宽度30px，居中
+                const y = rect.top - 40; // 教鞭高度40px，放在字母上方
+                
+                // 设置教鞭位置
+                pointer.style.left = `${x}px`;
+                pointer.style.top = `${y}px`;
+                pointer.style.opacity = '1';
+                
+                // 高亮当前字母
+                element.classList.add('pointing');
+                
+                // 如果有回调，在动画结束后执行
+                if (callback) {
+                    setTimeout(callback, 500);
+                }
+            }
+            
+            // 隐藏教鞭
+            function hidePointer() {
+                pointer.style.opacity = '0';
+                
+                // 移除所有字母的高亮
+                document.querySelectorAll('.letter.pointing').forEach(letter => {
+                    letter.classList.remove('pointing');
+                });
+            }
+            
+            // 修改单词显示函数，使字母可单独定位
+            function highlightPattern(word, pattern) {
+                // 处理特殊模式名称
+                let actualPattern = pattern;
+                if (pattern === 'ui-ue') {
+                    if (word.includes('ui')) {
+                        actualPattern = 'ui';
+                    } else if (word.includes('ue')) {
+                        actualPattern = 'ue';
+                    }
+                } else if (pattern === 'ow1' || pattern === 'ow2') {
+                    actualPattern = 'ow';
+                } else if (pattern === 'y1' || pattern === 'y2') {
+                    actualPattern = 'y';
+                }
+                
+                // 使用正则表达式找到模式的位置
+                const patternRegex = new RegExp(`(${actualPattern})`, 'gi');
+                const match = patternRegex.exec(word);
+                
+                if (!match) return word;
+                
+                const patternStart = match.index;
+                const patternEnd = patternStart + match[1].length;
+                
+                // 构建带有单独字母span的单词
+                let result = '';
+                for (let i = 0; i < word.length; i++) {
+                    if (i === patternStart) {
+                        result += `<span class="letter highlight" data-start="${i}" data-end="${patternEnd-1}">`;
+                    }
+                    
+                    result += word[i];
+                    
+                    if (i === patternEnd - 1) {
+                        result += '</span>';
+                    }
+                }
+                
+                return result;
+            }
+            
+            // 初始化练习功能变量
+            currentPattern = 'ai';
+            practiceWords = [];
+            originalOrderWords = [];
+            currentPracticeIndex = -1;
+            isSpellingMode = false;
+            isSecondRound = false;
+            
+            // 获取DOM元素
+            const startPracticeBtn = document.getElementById('start-practice');
+            const showWordBtn = document.getElementById('show-word');
+            const nextWordBtn = document.getElementById('next-word');
+            const playWordBtn = document.getElementById('play-word');
+            const practiceWordEl = document.getElementById('practice-word');
+            const spellingInputContainer = document.getElementById('spelling-input-container');
+            const spellingInput = document.getElementById('spelling-input');
+            const spellingSubmit = document.getElementById('spelling-submit');
+            const feedbackEl = document.getElementById('feedback');
+            
+            // 检查浏览器是否支持语音合成
+            const speechSupported = 'speechSynthesis' in window;
+            
+            if (!speechSupported) {
+                alert('您的浏览器不支持语音合成功能，部分发音功能可能无法使用。');
+            }
+            
+            // 初始化侧边栏
+            initSidebar();
+            
+            // 默认显示第一个模式
+            showPattern('ai');
+            
+            // 初始化发音按钮
+            const patternSoundBtn = document.getElementById('pattern-sound-btn');
+            
+            // 播放音标发音 - 使用示例单词代替音标
+            function playPhoneticSound() {
+                if (!speechSupported) {
+                    alert('您的浏览器不支持语音合成功能');
+                    return;
+                }
+                
+                // 停止任何当前正在播放的语音
+                window.speechSynthesis.cancel();
+                
+                // 获取当前组合的示例单词
+                const exampleWord = allPatterns[currentPattern].words[0].word;
+                
+                // 创建语音对象
+                const utterance = new SpeechSynthesisUtterance(exampleWord);
+                
+                // 设置英语发音
+                utterance.lang = 'en-US';
+                
+                // 播放
+                window.speechSynthesis.speak(utterance);
+            }
+            
+            // 播放单词发音
+            function playWordSound(word, element) {
+                if (!speechSupported) {
+                    alert('您的浏览器不支持语音合成功能');
+                    return;
+                }
+                
+                // 停止任何当前正在播放的语音
+                window.speechSynthesis.cancel();
+                
+                // 如果有元素参数，查找其中的字母组合
+                if (element) {
+                    const highlightElement = element.querySelector('.highlight');
+                    if (highlightElement) {
+                        movePointerToElement(highlightElement, function() {
+                            // 创建语音对象
+                            const utterance = new SpeechSynthesisUtterance(word);
+                            
+                            // 设置英语发音
+                            utterance.lang = 'en-US';
+                            
+                            // 播放结束后隐藏教鞭
+                            utterance.onend = function() {
+                                setTimeout(hidePointer, 300);
+                            };
+                            
+                            // 播放
+                            window.speechSynthesis.speak(utterance);
+                        });
+                        return;
+                    }
+                }
+                
+                // 如果没有找到高亮元素，直接播放
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
+            
+            // 为模式发音按钮添加事件监听
+            patternSoundBtn.addEventListener('click', function() {
+                // 获取第一个示例单词
+                const firstExample = document.querySelector('.example');
+                if (firstExample) {
+                    const word = firstExample.querySelector('.play-btn').getAttribute('data-word');
+                    playWordSound(word, firstExample);
+                }
+            });
+            
+            // 初始化侧边栏
+            function initSidebar() {
+                const vowelList = document.getElementById('vowel-patterns');
+                
+                // 添加元音组合
+                patternCategories.vowel.forEach(pattern => {
+                    if (allPatterns[pattern]) {
+                        const li = document.createElement('li');
+                        li.className = 'pattern-item';
+                        li.textContent = pattern;
+                        li.setAttribute('data-pattern', pattern);
+                        li.addEventListener('click', () => showPattern(pattern));
+                        vowelList.appendChild(li);
+                    }
+                });
+                
+                // 搜索功能
+                const searchInput = document.getElementById('search-input');
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const allItems = document.querySelectorAll('.pattern-item');
+                    
+                    allItems.forEach(item => {
+                        const pattern = item.getAttribute('data-pattern');
+                        if (pattern.toLowerCase().includes(searchTerm)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            }
+            
+            // 重置拼写练习状态
+            function resetSpellingPractice() {
+                isSpellingMode = false;
+                isSecondRound = false;
+                spellingInputContainer.style.display = 'none';
+                spellingInput.value = '';
+                feedbackEl.innerHTML = '';
+                document.querySelector('.practice-title').textContent = "拼读练习";
+                
+                // 隐藏游戏按钮
+                document.querySelectorAll('.game-btn').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            }
+            
+            // 显示模式函数
+            function showPattern(pattern) {
+                if (!allPatterns[pattern]) return;
+                
+                // 更新活动项
+                const allItems = document.querySelectorAll('.pattern-item');
+                allItems.forEach(item => {
+                    if (item.getAttribute('data-pattern') === pattern) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // 更新模式标题
+                document.getElementById('current-pattern').textContent = pattern;
+                
+                // 更新发音和规则
+                document.getElementById('current-sound').textContent = allPatterns[pattern].sound;
+                document.getElementById('current-rule').textContent = allPatterns[pattern].rule;
+                
+                // 更新示例单词
+                const examplesContainer = document.getElementById('examples-container');
+                examplesContainer.innerHTML = '';
+                
+                allPatterns[pattern].words.forEach(item => {
+                    const exampleDiv = document.createElement('div');
+                    exampleDiv.className = 'example';
+                    
+                    const wordDiv = document.createElement('div');
+                    wordDiv.className = 'word';
+                    
+                    // 使用容器包裹单词，确保正常显示
+                    const wordContainer = document.createElement('span');
+                    wordContainer.className = 'word-container';
+                    wordContainer.innerHTML = highlightPattern(item.word, pattern);
+                    
+                    wordDiv.appendChild(wordContainer);
+                    
+                    const playButton = document.createElement('button');
+                    playButton.className = 'play-btn';
+                    playButton.setAttribute('data-word', item.word);
+                    playButton.innerHTML = '🔊';
+                    playButton.addEventListener('click', function() {
+                        const word = this.getAttribute('data-word');
+                        playWordSound(word, exampleDiv);
+                    });
+                    
+                    wordDiv.appendChild(playButton);
+                    
+                    const meaningDiv = document.createElement('div');
+                    meaningDiv.className = 'meaning';
+                    meaningDiv.textContent = item.meaning;
+                    
+                    exampleDiv.appendChild(wordDiv);
+                    exampleDiv.appendChild(meaningDiv);
+                    examplesContainer.appendChild(exampleDiv);
+                });
+                
+                // 更新当前练习的单词组
+                currentPattern = pattern;
+                practiceWords = [...allWords[pattern]];
+                originalOrderWords = [...allWords[pattern]];
+                currentPracticeIndex = -1;
+                
+                // 重置拼写练习状态
+                resetSpellingPractice();
+                practiceWordEl.textContent = "点击\"开始练习\"按钮开始";
+            }
+            
+            // 开始练习
+            startPracticeBtn.addEventListener('click', function() {
+                if (!allWords[currentPattern] || allWords[currentPattern].length === 0) {
+                    practiceWordEl.textContent = "此组合暂无单词可练习";
+                    return;
+                }
+                
+                // 重置为第一轮（顺序）练习
+                isSecondRound = false;
+                originalOrderWords = [...allWords[currentPattern]];
+                practiceWords = [...originalOrderWords];
+                currentPracticeIndex = 0;
+                isSpellingMode = true;
+                
+                // 显示输入框，隐藏单词显示
+                spellingInputContainer.style.display = 'flex';
+                practiceWordEl.textContent = "_".repeat(practiceWords[0].length);
+                practiceWordEl.setAttribute('data-word', practiceWords[0]);
+                
+                // 清空反馈
+                feedbackEl.innerHTML = '';
+                
+                // 更新练习标题
+                document.querySelector('.practice-title').textContent = "拼读练习 - 第一轮（顺序）";
+                
+                // 隐藏游戏按钮
+                document.querySelectorAll('.game-btn').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+                
+                // 聚焦输入框
+                spellingInput.focus();
+                
+                // 播放当前单词发音
+                playWordSound(practiceWords[0]);
+            });
+            
+            // 提交拼写
+            spellingSubmit.addEventListener('click', checkSpelling);
+            spellingInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkSpelling();
+                }
+            });
+            
+            function checkSpelling() {
+                if (!isSpellingMode || currentPracticeIndex < 0 || currentPracticeIndex >= practiceWords.length) return;
+                
+                const userInput = spellingInput.value.trim().toLowerCase();
+                const correctWord = practiceWords[currentPracticeIndex].toLowerCase();
+                
+                if (userInput === correctWord) {
+                    // 拼写正确
+                    feedbackEl.innerHTML = '<span class="correct">✔ 正确!</span>';
+                    setTimeout(() => {
+                        // 清空输入和反馈
+                        spellingInput.value = '';
+                        feedbackEl.innerHTML = '';
+                        
+                        // 移动到下一个单词
+                        currentPracticeIndex++;
+                        if (currentPracticeIndex >= practiceWords.length) {
+                            // 当前轮次所有单词都练习完毕
+                            if (!isSecondRound) {
+                                // 第一轮完成，开始第二轮（乱序）练习
+                                startSecondRound();
+                            } else {
+                                // 第二轮也完成，所有练习结束
+                                isSpellingMode = false;
+                                spellingInputContainer.style.display = 'none';
+                                practiceWordEl.textContent = "恭喜！所有单词都拼写正确！";
+                                document.querySelector('.practice-title').textContent = "拼读练习 - 完成";
+                                
+                                // 显示游戏按钮
+                                document.querySelectorAll('.game-btn').forEach(btn => {
+                                    btn.style.display = 'inline-block';
+                                });
+                                return;
+                            }
+                        }
+                        
+                        // 显示下一个单词的下划线
+                        practiceWordEl.textContent = "_".repeat(practiceWords[currentPracticeIndex].length);
+                        practiceWordEl.setAttribute('data-word', practiceWords[currentPracticeIndex]);
+                        
+                        // 播放发音
+                        playWordSound(practiceWords[currentPracticeIndex]);
+                        
+                        // 聚焦输入框
+                        spellingInput.focus();
+                    }, 1000);
+                } else {
+                    // 拼写错误
+                    feedbackEl.innerHTML = `
+                        <span class="incorrect">✗ 错误</span>
+                        <div class="correct-word">正确拼写: ${practiceWords[currentPracticeIndex]}</div>
+                    `;
+                    
+                    // 清空输入框并重新聚焦
+                    spellingInput.value = '';
+                    spellingInput.focus();
+                }
+            }
+            
+            // 开始第二轮（乱序）练习
+            function startSecondRound() {
+                isSecondRound = true;
+                practiceWords = [...originalOrderWords];
+                shuffleArray(practiceWords); // 打乱顺序
+                currentPracticeIndex = 0;
+                
+                // 更新练习标题
+                document.querySelector('.practice-title').textContent = "拼读练习 - 第二轮（乱序）";
+                
+                // 显示下一个单词的下划线
+                practiceWordEl.textContent = "_".repeat(practiceWords[0].length);
+                practiceWordEl.setAttribute('data-word', practiceWords[0]);
+                
+                // 播放发音
+                playWordSound(practiceWords[0]);
+                
+                // 聚焦输入框
+                spellingInput.focus();
+            }
+            
+            // 显示单词
+            showWordBtn.addEventListener('click', function() {
+                if (currentPracticeIndex >= 0 && currentPracticeIndex < practiceWords.length) {
+                    const word = practiceWords[currentPracticeIndex];
+                    const wordContainer = document.createElement('span');
+                    wordContainer.className = 'word-container';
+                    wordContainer.innerHTML = highlightPattern(word, currentPattern);
+                    practiceWordEl.innerHTML = '';
+                    practiceWordEl.appendChild(wordContainer);
+                }
+            });
+            
+            // 下一个单词
+            nextWordBtn.addEventListener('click', function() {
+                if (practiceWords.length === 0) return;
+                
+                // 如果正在拼写模式，先退出
+                if (isSpellingMode) {
+                    isSpellingMode = false;
+                    spellingInputContainer.style.display = 'none';
+                    feedbackEl.innerHTML = '';
+                }
+                
+                currentPracticeIndex++;
+                if (currentPracticeIndex >= practiceWords.length) {
+                    currentPracticeIndex = 0;
+                }
+                
+                practiceWordEl.textContent = "_".repeat(practiceWords[currentPracticeIndex].length);
+                practiceWordEl.setAttribute('data-word', practiceWords[currentPracticeIndex]);
+            });
+            
+            // 播放单词发音
+            playWordBtn.addEventListener('click', function() {
+                if (currentPracticeIndex >= 0 && currentPracticeIndex < practiceWords.length) {
+                    const word = practiceWords[currentPracticeIndex];
+                    playWordSound(word);
+                }
+            });
+            
+            // 添加游戏按钮
+            function addGameButtons() {
+                const practiceButtons = document.querySelector('.practice-buttons');
+                
+                // 小猪吃苹果游戏按钮
+                const pigGameBtn = document.createElement('button');
+                pigGameBtn.className = 'btn game-btn';
+                pigGameBtn.id = 'pig-game-btn';
+                pigGameBtn.textContent = '🐷 小猪吃苹果';
+                pigGameBtn.style.display = 'none';
+                practiceButtons.appendChild(pigGameBtn);
+                
+                // 单词拼图游戏按钮
+                const puzzleBtn = document.createElement('button');
+                puzzleBtn.className = 'btn game-btn';
+                puzzleBtn.id = 'word-puzzle-btn';
+                puzzleBtn.textContent = '🧩 单词拼图';
+                puzzleBtn.style.display = 'none';
+                practiceButtons.appendChild(puzzleBtn);
+                
+                // Hangman游戏按钮
+                const hangmanBtn = document.createElement('button');
+                hangmanBtn.className = 'btn game-btn';
+                hangmanBtn.id = 'hangman-btn';
+                hangmanBtn.textContent = '🎯 Hangman';
+                hangmanBtn.style.display = 'none';
+                practiceButtons.appendChild(hangmanBtn);
+                
+                // 单词匹配游戏按钮
+                const matchBtn = document.createElement('button');
+                matchBtn.className = 'btn game-btn';
+                matchBtn.id = 'word-match-btn';
+                matchBtn.textContent = '🧠 单词匹配';
+                matchBtn.style.display = 'none';
+                practiceButtons.appendChild(matchBtn);
+                
+                // 添加游戏按钮事件
+                pigGameBtn.addEventListener('click', startPigEatAppleGame);
+                puzzleBtn.addEventListener('click', startWordPuzzleGame);
+                hangmanBtn.addEventListener('click', startHangmanGame);
+                matchBtn.addEventListener('click', startWordMatchGame);
+            }
+            
+            // 页面加载完成后添加游戏按钮
+            setTimeout(addGameButtons, 500);
+        });
+    </script>
+</body>
+</html>
